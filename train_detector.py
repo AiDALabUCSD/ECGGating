@@ -15,11 +15,11 @@ mixed_precision.set_global_policy(policy)
 from ecg_dataset_manager import DatasetManager
 from deep_qrs_detector import DeepQRSDetector
 
-UCSD_PROCESSED_DATASET_LOCATION = '/media/vlermakov/data/UCSDData/'
-MITDB_DATASET_LOCATION = '/media/vlermakov/data/mitdb/raw/'
-JA_PROCESSED_DATASET_LOCATION  = '/content/drive/MyDrive/ECG Data/JA/runtime_data/'
+UCSD_PROCESSED_DATASET_LOCATION = './data/preprocessed/'
+MITDB_DATASET_LOCATION = './data/mitdb/raw/'
 
-dm = DatasetManager(UCSD_PROCESSED_DATASET_LOCATION,JA_PROCESSED_DATASET_LOCATION,MITDB_DATASET_LOCATION)
+dm = DatasetManager(UCSD_PROCESSED_DATASET_LOCATION = UCSD_PROCESSED_DATASET_LOCATION,
+                    MITDB_DATASET_LOCATION = MITDB_DATASET_LOCATION)
 
 
 class config:
@@ -36,7 +36,7 @@ def define_model_callbacks():
                                                    patience=config.patience,
                                                    verbose=1
                                                   )
-    check_point = keras.callbacks.ModelCheckpoint(os.path.join(config.model_path, config.exp_name+"_best.keras"),
+    check_point = keras.callbacks.ModelCheckpoint(os.path.join(config.model_path, config.exp_name+"_best.h5"),
                                                   verbose=config.verbose,
                                                   save_best_only=config.save_best_only
                                                   )
@@ -77,4 +77,4 @@ val_dataset = dm.get_dataset(DeepQRSDetector,csv_path, run_config['batch_size'],
 
 model = DeepQRSDetector.train_model(train_dataset, val_dataset, run_config, build_optimizer(run_config["learning_rate"],run_config["optimizer"]),define_model_callbacks())
 
-model.save(config.model_path, config.exp_name+"_best_finished.keras")
+model.save(config.model_path, config.exp_name+"_best_finished.h5")
