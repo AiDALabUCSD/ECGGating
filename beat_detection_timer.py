@@ -8,7 +8,6 @@ import tensorflow as tf
 from ecg_dataset_manager import DatasetManager
 from deep_qrs_detector import DeepQRSDetector
 from deep_qrs_predictor import DeepQRSPredictor
-from beat_classification import ECGBeatClassifier
 
 run_parameters = {}
 
@@ -62,34 +61,22 @@ for index, row in df.iterrows():
         start_time = time.time()
         hamilton_peaks = bsp.ecg.hamilton_segmenter(unfiltered_ecg, sampling_rate=250)
         record['Hamilton_Time'] = time.time() - start_time
-        hamilton_array = np.array(hamilton_peaks).squeeze().astype(np.int32)
-        classifier = ECGBeatClassifier(unfiltered_ecg, hamilton_array, p=0.1, p_short=0.75, p_long=1.20)
-        _, total_beat_count = classifier.beat_breakdown()
-        record['Hamilton_Beats'] = total_beat_count
 
     # CNN Detector
     if run_parameters['EVALUATE_CNN_DETECTOR']:
         start_time = time.time()
         qrs_peaks_detector, _ = cnn_detector.detect_peaks(unfiltered_ecg)
         record['Detector_Time'] = time.time() - start_time
-        cnn_detector_peaks_array = np.array(qrs_peaks_detector).astype(np.int32)
-        classifier = ECGBeatClassifier(unfiltered_ecg, cnn_detector_peaks_array, p=0.1, p_short=0.75, p_long=1.20)
-        _, total_beat_count = classifier.beat_breakdown()
-        record['Detector_Beats'] = total_beat_count
 
     # CNN Predictor
     if run_parameters['EVALUATE_CNN_PREDICTOR']:
         start_time = time.time()
         qrs_peaks_predictor, _, _ = cnn_predictor.detect_peaks(unfiltered_ecg, return_confidence_intervals=True)
         record['Predictor_Time'] = time.time() - start_time
-        cnn_predictor_peaks_array = np.array(qrs_peaks_predictor).astype(np.int32)
-        classifier = ECGBeatClassifier(unfiltered_ecg, cnn_predictor_peaks_array, p=0.1, p_short=0.75, p_long=1.20)
-        _, total_beat_count = classifier.beat_breakdown()
-        record['Predictor_Beats'] = total_beat_count
 
     # Append the record to the list
     records.append(record)
 
 # Convert records to a DataFrame and save to CSV
 results_df = pd.DataFrame(records)
-results_df.to_csv('./results/detection_time_performance2.csv', index=False)
+results_df.to_csv('./results/detection_time_performance.csv', index=False)

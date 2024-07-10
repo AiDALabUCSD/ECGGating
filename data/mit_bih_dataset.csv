@@ -1,7 +1,7 @@
 scan,dataset,type
 100,MITDB,test
 101,MITDB,test
-102,MITDB,training
+102,MITDB,test
 103,MITDB,test
 104,MITDB,training
 105,MITDB,test
@@ -22,10 +22,10 @@ scan,dataset,type
 122,MITDB,test
 123,MITDB,test
 124,MITDB,test
-200,MITDB,training
+200,MITDB,test
 201,MITDB,test
 202,MITDB,test
-203,MITDB,training
+203,MITDB,test
 205,MITDB,test
 207,MITDB,training
 208,MITDB,test
@@ -44,6 +44,6 @@ scan,dataset,type
 228,MITDB,test
 230,MITDB,test
 231,MITDB,test
-232,MITDB,training
+232,MITDB,test
 233,MITDB,test
 234,MITDB,test
