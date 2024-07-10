@@ -8,13 +8,13 @@ from keras.layers import MaxPooling1D, Flatten, Dense, Dropout
 from keras.layers import Dense, Conv1D
 
 
-DETECTION_WINDOW = 64
-SAMPLES_PER_SLICE = 512
-PREDICTION_WINDOW = SAMPLES_PER_SLICE*2
+DETECTION_WINDOW = 64 # <-- 64 samples = 256 ms overlap between context and prediction window
+SAMPLES_PER_SLICE = 512 # <-- 512 samples = 2.048 s
+PREDICTION_WINDOW = SAMPLES_PER_SLICE*2 # <-- 1024 samples = 4.096 s
 WINDOWS_PER_SLICE = 1
 # WINDOWS_PER_SLICE = int(SAMPLES_PER_SLICE/DETECTION_WINDOW)
 
-OFFSET_FROM_END = 8
+OFFSET_FROM_END = 8 # <-- 8 samples = 32 ms
 OFFSET_FROM_FRONT = SAMPLES_PER_SLICE - OFFSET_FROM_END - DETECTION_WINDOW * WINDOWS_PER_SLICE
 # OFFSET_FROM_FRONT = 0
 
@@ -200,7 +200,7 @@ class DeepQRSPredictor:
         peak_offsets = []
 
         for peak in peaks_candidates:
-          # Check if the peak is at least 30 samples away from oll other peaks
+          # Check if the peak is at least 30 samples away from all other peaks
           if(len(qrs_peaks) == 0 or min(abs(np.array(qrs_peaks) - peak[0])) > self.PEAK_COOLDOWN_THRESHOLD):
               qrs_peaks.append(peak[0])
               peak_offsets.append(peak[1])

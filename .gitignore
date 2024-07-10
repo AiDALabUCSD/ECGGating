@@ -1,10 +1,6 @@
-data/mitdb
-data/preprocessed
-data/ucsd
-.ipynb_checkpoints
-__pycache__
-data/.~lock.training_and_evaluation_dataset.csv#
-models/*
-models/variables/variables.data-00000-of-00001
-models/variables/variables.index
-evaluation_results.csv
+/models
+/figures
+/movies
+/results
+/html
+/data

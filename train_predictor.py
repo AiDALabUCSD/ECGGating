@@ -17,7 +17,7 @@ from ecg_dataset_manager import DatasetManager
 from deep_qrs_predictor import DeepQRSPredictor
 
 
-UCSD_PROCESSED_DATASET_LOCATION = './data/preprocessed/'
+UCSD_PROCESSED_DATASET_LOCATION = './data/old_preprocessed/'
 MITDB_DATASET_LOCATION = './data/mitdb/raw/'
 
 dm = DatasetManager(UCSD_PROCESSED_DATASET_LOCATION = UCSD_PROCESSED_DATASET_LOCATION,

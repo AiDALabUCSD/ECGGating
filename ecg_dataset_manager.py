@@ -6,22 +6,28 @@ import tensorflow as tf
 
 # Define a class to manage ECG datasets
 class DatasetManager:
-    def __init__(self,UCSD_PROCESSED_DATASET_LOCATION = '/content/drive/MyDrive/ECG Data/UCSDData/',JA_PROCESSED_DATASET_LOCATION  = '/content/drive/MyDrive/ECG Data/JA/runtime_data/',MITDB_DATASET_LOCATION = '/content/drive/MyDrive/ECG Data/mitdb/raw/') -> None:
+    def __init__(self,UCSD_PROCESSED_DATASET_LOCATION = './data/old_preprocessed/', 
+                 JA_PROCESSED_DATASET_LOCATION  = '/content/drive/MyDrive/ECG Data/JA/runtime_data/', # we dont use this
+                 MITDB_DATASET_LOCATION = './data/mitdb/raw/', 
+                 NEW_PROCESSED_DATASET_LOCATION = './data/new_processed/') -> None:
         self.UCSD_PROCESSED_DATASET_LOCATION = UCSD_PROCESSED_DATASET_LOCATION
         self.JA_PROCESSED_DATASET_LOCATION  = JA_PROCESSED_DATASET_LOCATION
         self.MITDB_DATASET_LOCATION = MITDB_DATASET_LOCATION
+        self.NEW_PROCESSED_DATASET_LOCATION = NEW_PROCESSED_DATASET_LOCATION
 
-    def LoadSignalAndAnnotations(self,testcase,database = "UCSD", TARGET_FREQUENCY = 250.0, iStart=None,iStop=None,just_train = False,step_interval = 1):
+    def LoadSignalAndAnnotations(self,testcase,database = "UCSD", TARGET_FREQUENCY = 250.0, iStart=None,iStop=None,just_train = False,step_interval = 1, ECG = 'ECG2'):
+        
         if(database == 'UCSD'):
-            p_signal = np.load(f'{self.UCSD_PROCESSED_DATASET_LOCATION}data_{testcase}.npy')[::int(1000.0/TARGET_FREQUENCY)] # Downsample from 1000 Hz to 250
+            # Downsample signal and annotation from 1000 Hz to 250 Hz
+            p_signal = np.load(f'{self.UCSD_PROCESSED_DATASET_LOCATION}data_{testcase}.npy')[::int(1000.0/TARGET_FREQUENCY)]
             annotations = np.load(f'{self.UCSD_PROCESSED_DATASET_LOCATION}data_anno_{testcase}.npy')
             annotations = [int(a * (TARGET_FREQUENCY / 1000.0)) for a in annotations]
+        
         elif(database == "JA"):
             #testcase = '11_sitting_chest_strap_V2_V1_Ermakov.npy'
-
             p_signal = np.load(f'{self.JA_PROCESSED_DATASET_LOCATION}data_{testcase}')
-
             annotations = np.load(f'{self.JA_PROCESSED_DATASET_LOCATION}data_anno_{testcase}')
+        
         elif(database == "MITDB"):
             record = wfdb.rdrecord(f'{self.MITDB_DATASET_LOCATION}{testcase}', channels=[0, 1])
             annotations = wfdb.rdann(f'{self.MITDB_DATASET_LOCATION}{testcase}', 'atr')
@@ -29,15 +35,21 @@ class DatasetManager:
             p_signal = record.p_signal[:,0]
             annotations = annotations.sample
 
-            # Generate a test signal with a sampling frequency of 360 Hz
-            # Downsample the signal to 250 Hz
-            new_signal = resample(p_signal, int(len(p_signal)*TARGET_FREQUENCY/360.0))
-            # Need to scale down signal an annotations from 360 to 250 Hz
-            # Generate a test signal with a sampling frequency of 360 Hz
-            # Downsample the signal to 250 Hz
+            # Downsample the signal and annotations from 360 Hz to 250 Hz
             p_signal = resample(p_signal, int(len(p_signal)*TARGET_FREQUENCY/360.0))
-
             annotations = [ round((a * TARGET_FREQUENCY)/360.0) for a in annotations]
+            
+        elif(database == "New_Dataset"):
+            # Downsample signal and annotation from 1000 Hz to 250 Hz
+            if 'Case' in testcase:
+                p_signal = np.load(f'{self.NEW_PROCESSED_DATASET_LOCATION}GE_{testcase}_ECG2_data.npy')[::int(1000.0/TARGET_FREQUENCY)]
+            else:
+                if ECG == 'ECG3':
+                    p_signal = np.load(f'{self.NEW_PROCESSED_DATASET_LOCATION}data_{testcase}_ecg3.npy')[::int(1000.0/TARGET_FREQUENCY)]
+                elif ECG == 'ECG2':
+                    p_signal = np.load(f'{self.NEW_PROCESSED_DATASET_LOCATION}data_{testcase}.npy')[::int(1000.0/TARGET_FREQUENCY)]
+            annotations = None
+
         else:
             raise Exception("No such dataset.")
 
@@ -47,10 +59,10 @@ class DatasetManager:
             iStop = len(p_signal)
             
         p_signal = p_signal[iStart:iStop]
+        raw_signal = p_signal.squeeze() # Remove the channel dimension
 
-        annotations = [a - iStart for a in annotations if (a >= iStart and a < iStop)]
-
-        raw_signal = p_signal.squeeze()
+        if annotations is not None:
+            annotations = [a - iStart for a in annotations if (a >= iStart and a < iStop)]
 
         return raw_signal, annotations
         
@@ -65,8 +77,10 @@ class DatasetManager:
             iStop = len(raw_signal)
 
         raw_signal = raw_signal[iStart:iStop]
-        annotations = [a - iStart for a in annotations if (a >= iStart and a < iStop)]
         raw_signal = raw_signal.squeeze()
+
+        if annotations is not None:
+            annotations = [a - iStart for a in annotations if (a >= iStart and a < iStop)]
 
         dataX, dataY = model_class.prepare_data(step_interval,raw_signal,annotations)
         

@@ -9,8 +9,8 @@ from keras.layers import MaxPooling1D, Flatten, Dense, Dropout,Concatenate
 from keras.layers import Dense, Conv1D
 
 
-DETECTION_WINDOW = 16
-SAMPLES_PER_SLICE = 512
+DETECTION_WINDOW = 16 # <-- 16 samples = 64ms
+SAMPLES_PER_SLICE = 512 # <-- 512 samples = 2.048s
 WINDOWS_PER_SLICE = 1
 # WINDOWS_PER_SLICE = int(SAMPLES_PER_SLICE/DETECTION_WINDOW)
 
