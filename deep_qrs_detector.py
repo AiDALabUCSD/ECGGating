@@ -133,8 +133,7 @@ class DeepQRSDetector:# Static variables
         self.model = keras.models.load_model(model_file,custom_objects={'ecg_detection_loss': ecg_detection_loss, 'ja_metric': ja_metric,'ecg_accuracy': ecg_accuracy,'qrs_jitter': qrs_jitter})
     
     def detect_peaks(self, raw_ecg_signal, sampling_rate = None):
-        if(sampling_rate is None):
-            sampling_rate = self.fs
+        if(sampling_rate is None): sampling_rate = self.fs
 
         # Prepare the signal for the model
         ecg_signal_x_norm, _ = self.prepare_data(SAMPLE_STEP,raw_ecg_signal)
@@ -172,8 +171,7 @@ class DeepQRSDetector:# Static variables
         return qrs_peaks, np.mean(peak_offsets)
     
     def estimate_loss(self, raw_ecg_signal, annotations, sampling_rate = None):
-        if(sampling_rate is None):
-            sampling_rate = self.fs
+        if(sampling_rate is None): sampling_rate = self.fs
 
         # Prepare the signal for the model
         ecg_signal_x_norm, ecg_signal_y = DeepQRSDetector.prepare_data(SAMPLE_STEP, raw_ecg_signal, annotations)
