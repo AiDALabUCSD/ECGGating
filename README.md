@@ -15,7 +15,7 @@ This project contains code for developing an ECG R-wave Detection convolutional 
 - `deep_qrs_detector.py`: Defines a deep learning model for detecting QRS complexes in ECG signals and includes methods for training and evaluating the model.
 - `qrs_detection_timer.py`: Measures the execution time of different QRS detection methods.
 - `labelstudio_tools.py`: Tools for handling Label Studio annotations and converting them to dataframes.
-- `beat_classification_functions.py`: Functions for classifying ECG beats based on detected R-peaks.
-- `beat_classifier.py`: Script to classify ECG beats using different methods and save the results.
+- `beat_classification_functions.py`: Functions for classifying ECG beats based on detected R-peaks and RR-intervals.
+- `beat_classifier.py`: Script to classify ECG beats algorithmically and save the results.
 
 
