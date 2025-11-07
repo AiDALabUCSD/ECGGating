@@ -1,4 +1,4 @@
-# Deep Learning ECG R-Wave Detection for Gating of Cardiac MRI
+# Deep Learning R-Wave Detection for Electrocardiographic Gating in Cardiac MRI
 
 This project contains code for developing an ECG R-wave Detection convolutional neural network for MRI.
 
