@@ -2,7 +2,7 @@
 
 This repository contains code for developing an R-wave detection convolutional neural network. 
 
-Published Article: https://doi/10.1148/ryct.250104
+Published article: https://doi.org/10.1148/ryct.250104
 
 ## File Descriptions
 
